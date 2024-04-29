@@ -72,7 +72,8 @@ rec.SetWords(True)
 if wf.getnchannels() == 1:
     pass
 else:
-    os.system(f'ffmpeg -i {audio_filename} -ac 1 {audio_filename}')
+    print("2 chanel audio detected, converting to 1 chanel")
+    os.system(f'ffmpeg -i {audio_filename} -ac 1 {audio_filename}') #FIX THIS LINE OF CODE, TK DOESN'T KNOW WHAT THIS ARG IS. ALSO THIS IS NOT NEEDED.
 # get the list of JSON dictionaries
 print("recognizing audio")
 results = []
@@ -122,7 +123,10 @@ with open('gen.txt', 'w') as f:
     f.close()
 #done with audio processing
 #now start the GUI up
-os.remove("output_audio.mp3")
+try:
+    os.remove("output_audio.mp3")
+except FileNotFoundError:
+    pass
 
 def remove_section(video_path, start_time, end_time, output_path):
     video = VideoFileClip(video_path)
@@ -175,16 +179,21 @@ def wv():
             
 
 # Create the main window
-root = tk.Tk()
+import customtkinter as ctk
+from tkinter import messagebox
+root = ctk.CTk()
 root.title("Text Based Video Editor (NON PRODUCTION)")
+root.geometry("400x400")
 
 # Create a Text widget to display the content
-text_widget = tk.Text(root, wrap="word", width=40, height=10)
-text_widget.pack(pady=10)
-text_widget.insert(tk.END, "init")
+text_widget = ctk.CTkTextbox(root, wrap="word")
+text_widget.pack(pady=10, expand=True, fill="both")
+text_widget.insert(ctk.END, "init")
 open_file()
-sc = tk.Button(root, text="Write to Video", command=wv)
+sc = ctk.CTkButton(root, text="Write to Video", command=wv)
+abt = ctk.CTkButton(root, text="About", command=lambda: messagebox.showinfo("About", "This is a text based video editor. \n developed by aghastmuffin. \n Version 0.1 \n FREE TIER."))
 # Run the Tkinter event loop
 sc.pack()
+root.focus_force()
+abt.pack()
 root.mainloop()
-
